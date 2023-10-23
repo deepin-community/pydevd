@@ -1,0 +1,61 @@
+Description: Do not install unneeded files
+Author: William Grzybowski <william@grzy.org>
+  Julian Gilbey <jdg@debian.org>
+Forwarded: not-needed
+Last-Update: 2022-06-17
+
+--- a/setup.py
++++ b/setup.py
+@@ -32,24 +32,6 @@
+     def is_pure(self):
+         return False
+ 
+-
+-data_files = []
+-
+-
+-def accept_file(f):
+-    f = f.lower()
+-    for ext in '.py .dll .so .dylib .txt .cpp .h .bat .c .sh .md .txt'.split():
+-        if f.endswith(ext):
+-            return True
+-
+-    return f in ['readme', 'makefile']
+-
+-
+-data_files.append(('pydevd_attach_to_process', [os.path.join('pydevd_attach_to_process', f) for f in os.listdir('pydevd_attach_to_process') if accept_file(f)]))
+-for root, dirs, files in os.walk("pydevd_attach_to_process"):
+-    for d in dirs:
+-        data_files.append((os.path.join(root, d), [os.path.join(root, d, f) for f in os.listdir(os.path.join(root, d)) if accept_file(f)]))
+-
+ import pydevd
+ version = pydevd.__version__
+ 
+@@ -126,7 +108,6 @@
+             'pydevd = pydevd:main',
+         ],
+     },
+-    data_files=data_files,
+     keywords=['pydev', 'pydevd', 'pydev.debugger'],
+     include_package_data=True,
+     zip_safe=False,
+--- a/MANIFEST.in
++++ b/MANIFEST.in
+@@ -1,8 +1,8 @@
+-include *.rst *.txt *.md LICENSE-EPL LICENSE-APACHE *.pyx *.cpp *.hpp
+-recursive-include pydevd_attach_to_process *.py *.dll *.so *.dylib *.txt *.c *.h *.bat Makefile *.sh *.pyx *.cpp *.hpp
+-recursive-include pydevd_attach_to_process/common *.py *.dll *.so *.dylib *.txt *.c *.h *.bat Makefile *.sh *.pyx *.cpp *.hpp
+-recursive-include pydevd_attach_to_process/linux_and_mac *.py *.dll *.so *.dylib *.txt *.c *.h *.bat Makefile *.sh *.pyx *.cpp *.hpp
+-recursive-include pydevd_attach_to_process/winappdbg *.py *.dll *.so *.dylib *.txt *.c *.h *.bat Makefile *.sh *.pyx *.cpp *.hpp
+-recursive-include pydevd_attach_to_process/windows *.py *.dll *.so *.dylib *.txt *.c *.h *.bat Makefile *.sh *.pyx *.cpp *.hpp
+-recursive-include _pydevd_bundle *.pyx *.cpp *.hpp
+-recursive-include build_tools *.py
+\ No newline at end of file
++recursive-include pydevd_attach_to_process *.py *.so *.h *.bat *.sh *.cpp *.hpp
++recursive-include pydevd_attach_to_process/common *.h *.hpp
++recursive-include pydevd_attach_to_process/linux_and_mac *.py *.sh *.cpp
++recursive-include pydevd_attach_to_process/winappdbg *.py
++recursive-include pydevd_attach_to_process/windows *.h *.bat *.cpp *.hpp
++recursive-include _pydevd_bundle *.pyx *.pxd
++recursive-include _pydevd_frame_eval *.pyx *.pxd *.h
++recursive-include build_tools *.py

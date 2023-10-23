@@ -1,0 +1,6 @@
+version=4
+opts=dversionmangle=s/\+ds//,\
+  repack,repacksuffix=+ds,\
+  uversionmangle=s/_/\./g \
+  https://github.com/fabioz/PyDev.Debugger/tags \
+  (?:.*/)?pydev_debugger_(.*)\.tar\.gz debian

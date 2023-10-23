@@ -1,4 +1,72 @@
 #!/usr/bin/make -f
+#export DH_VERBOSE = 1
+
+include /usr/share/dpkg/pkg-info.mk
+export PYBUILD_NAME=pydevd
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+CXXFLAGS:=$(shell dpkg-buildflags --get CXXFLAGS)
+CPPFLAGS:=$(shell dpkg-buildflags --get CPPFLAGS)
+LDFLAGS:=$(shell dpkg-buildflags --get LDFLAGS)
 
 %:
-	dh $@
+	dh $@ --buildsystem=pybuild
+
+_pydevd_bundle/pydevd_runpy.py:
+	libdir=/usr/lib/$$(debian/py3versions_min.py); \
+	    cp $$libdir/runpy.py _pydevd_bundle/pydevd_runpy.py
+	patch -p1 < debian/runpy.patch
+
+execute_before_dh_auto_clean: _pydevd_bundle/pydevd_runpy.py
+	# setup.py clean requires pydevd_runpy.py to be present
+
+execute_after_dh_clean:
+	rm -f _pydevd_bundle/pydevd_runpy.py
+
+execute_before_dh_auto_configure: _pydevd_bundle/pydevd_runpy.py
+	# setup.py config requires pydevd_runpy.py to be present
+
+override_dh_auto_build:
+	# This shared library is Python-version agnostic
+	cd pydevd_attach_to_process/linux_and_mac && \
+	    g++ $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -shared \
+	      -o ../attach.so -fPIC -nostartfiles attach.cpp
+	# Regenerate the Cython C files (though ignore the generated
+	# .so files; they will be compiled for each Python version in
+	# dh_auto_build)
+	PYBUILD_AFTER_BUILD="cd {build_dir}; {interpreter} setup_pydevd_cython.py build_ext --inplace --force-cython" \
+	    dh_auto_build --buildsystem=pybuild
+	txt2man -t pydevd -P pname -r "pydevd-$(DEB_VERSION_UPSTREAM)" -s 1 -v "" -d "July 2022" debian/manpage/pydevd.txt > debian/manpage/pydevd.1
+
+execute_after_dh_auto_install:
+	# usr/bin needs to be moved from debian/python3-pydevd to debian/pydevd
+	# dh_install will move it from debian/tmp
+	-mkdir -p debian/tmp/usr
+	mv debian/python3-pydevd/usr/bin debian/tmp/usr
+
+override_dh_python3:
+	dh_python3 --no-ext-rename
+
+ifeq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
+override_dh_auto_test:
+	# * Various tests are ignored or excluded; see
+	# debian/get_test_exclusions for details.
+	#
+	# * test_matplotlib_activation and test_pandas cause failures due
+	# to a matplotlib warning (that does not seem to be easily silenced)
+	# if the build machine has too many fonts on it, so we skip then here
+	# (but not in the autopkgtest suite)
+	#
+	# * The http_proxy settings are to disable the proxies that pybuild
+	# introduces; the tests set up and use a local http server.
+	export PYDEVD_USE_CYTHON=YES; \
+	export http_proxy=""; \
+	export PYBUILD_SYSTEM=custom; \
+	export PYBUILD_TEST_ARGS="\
+		cd {build_dir}; \
+		$(CURDIR)/debian/run_tests $(CURDIR)/debian/get_test_exclusions {interpreter} -m pytest \
+	        --deselect=tests_python/test_debugger.py::test_matplotlib_activation \
+	        --deselect=tests_python/test_debugger_json.py::test_pandas"; \
+	xvfb-run -a dh_auto_test
+endif
