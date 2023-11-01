@@ -1,0 +1,53 @@
+Description: Use bytecode package rather than local version
+  The vendored version of the package is removed in debian/copyright,
+  and the Debian version of the package includes the patch from this
+  package.
+Author: Julian Gilbey <jdg@debian.org>
+Forwarded: not-needed
+Last-Update: 2022-02-12
+
+---
+ _pydevd_bundle/pydevd_bytecode_utils.py      | 6 +++---
+ _pydevd_frame_eval/pydevd_modify_bytecode.py | 4 ++--
+ setup.py                                     | 2 --
+ 3 files changed, 5 insertions(+), 7 deletions(-)
+
+--- a/_pydevd_bundle/pydevd_bytecode_utils.py
++++ b/_pydevd_bundle/pydevd_bytecode_utils.py
+@@ -6,9 +6,9 @@
+ 
+ from _pydev_bundle import pydev_log
+ from types import CodeType
+-from _pydevd_frame_eval.vendored.bytecode.instr import _Variable
+-from _pydevd_frame_eval.vendored import bytecode
+-from _pydevd_frame_eval.vendored.bytecode import cfg as bytecode_cfg
++from bytecode.instr import _Variable
++import bytecode
++from bytecode import cfg as bytecode_cfg
+ import dis
+ import opcode as _opcode
+ 
+--- a/_pydevd_frame_eval/pydevd_modify_bytecode.py
++++ b/_pydevd_frame_eval/pydevd_modify_bytecode.py
+@@ -5,8 +5,8 @@
+ import os.path
+ import sys
+ 
+-from _pydevd_frame_eval.vendored import bytecode
+-from _pydevd_frame_eval.vendored.bytecode.instr import Instr, Label
++import bytecode
++from bytecode.instr import Instr, Label
+ from _pydev_bundle import pydev_log
+ from _pydevd_frame_eval.pydevd_frame_tracing import _pydev_stop_at_break, _pydev_needs_stop_at_break
+ 
+--- a/setup.py
++++ b/setup.py
+@@ -55,8 +55,6 @@
+         '_pydevd_bundle._debug_adapter',
+         '_pydevd_bundle.pydevd_concurrency_analyser',
+         '_pydevd_frame_eval',
+-        '_pydevd_frame_eval.vendored',
+-        '_pydevd_frame_eval.vendored.bytecode',
+         'pydev_ipython',
+ 
+         # 'pydev_sitecustomize', -- Not actually a package (not added)

@@ -1,15 +1,74 @@
-Source: template-repository
-Section: unknown
+Source: pydevd
+Section: python
 Priority: optional
-Maintainer: Tsic404 <liuheng@deepin.org>
-Build-Depends: debhelper (>= 11)
-Standards-Version: 4.1.3
-Homepage: https://github.com/deepin-community/template-repository
-#Vcs-Browser: https://salsa.debian.org/debian/deepin-community-template-repository
-#Vcs-Git: https://salsa.debian.org/debian/deepin-community-template-repository.git
+Maintainer: Debian Python Team <team+python@tracker.debian.org>
+Uploaders: Julian Gilbey <jdg@debian.org>
+Build-Depends: cython3,
+               debhelper-compat (= 13),
+               dh-python,
+               dh-sequence-python3,
+               gdb <!nocheck>,
+               libqt5x11extras5 <!nocheck>,
+               procps <!nocheck>,
+               python3-all-dev,
+               python3-bytecode (>= 0.14.0-2),
+               python3-cherrypy3 <!nocheck>,
+               python3-coverage <!nocheck>,
+               python3-django <!nocheck>,
+               python3-flask <!nocheck>,
+               python3-gevent <!nocheck>,
+               python3-ipython <!nocheck>,
+               python3-jinja2 <!nocheck>,
+               python3-matplotlib <!nocheck>,
+               python3-numpy <!nocheck>,
+               python3-pandas <!nocheck>,
+               python3-psutil <!nocheck>,
+               python3-pyqt5 <!nocheck>,
+               python3-pyqt5.qtsvg <!nocheck>,
+               python3-pytest <!nocheck>,
+               python3-pytest-xdist <!nocheck>,
+               python3-setuptools,
+               python3-trio <!nocheck>,
+               python3-untangle <!nocheck>,
+               txt2man,
+               xauth <!nocheck>,
+               xvfb <!nocheck>
+Standards-Version: 4.6.2
+Rules-Requires-Root: no
+Homepage: https://github.com/fabioz/PyDev.Debugger/
+Vcs-Browser: https://salsa.debian.org/python-team/packages/pydevd
+Vcs-Git: https://salsa.debian.org/python-team/packages/pydevd.git
+Description: Debugger used by debugpy
+ This is the debugger underlying debugpy, which is used by IPython and
+ Spyder, among others.
+ .
+ This package can also be used for remote debugging, connecting from an IDE.
 
-Package: template-repository
+Package: pydevd
+Architecture: all
+Depends: python3-pydevd (>= ${binary:Version}),
+         ${misc:Depends},
+         ${python3:Depends}
+Section: utils
+Description: ${source:Synopsis} (command line script)
+ ${source:Extended-Description}
+ .
+ This package provides the "pydevd" command to run pydevd on another
+ Python script from the command line.
+
+Package: python3-pydevd
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Depends: gdb,
+         python3-bytecode (>= 0.14.0-2),
+         python3-coverage,
+         ${misc:Depends},
+         ${python3:Depends},
+         ${shlibs:Depends}
+Suggests: pydevd
+Breaks: python3-debugpy (<< 1.6.3+git20221103.a2a3328+ds),
+        python3-omegaconf (<< 2.2.2-1)
+Replaces: python3-omegaconf (<< 2.2.2-1)
+Description: ${source:Synopsis} (command line script)
+ ${source:Extended-Description}
+ .
+ The command line "pydevd" tool is available in the separate pydevd package.

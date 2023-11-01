@@ -1,0 +1,38 @@
+# Python 2 files which do not compile under Python 3,
+# thereby preventing package installation.
+pydevd_attach_to_process/_check.py
+#
+# Windows only code; no point installing
+pydevd_attach_to_process/winappdbg
+pydevd_attach_to_process/windows
+#
+# This is only installed to help people on systems where the
+# Cython extensions have not already been built.  Though the
+# pydevd developers include it in the package (see
+# https://github.com/fabioz/PyDev.Debugger/issues/102), we have
+# no need for it in Debian.
+setup_pydevd_cython.py
+#
+# macOS only
+pydevd_attach_to_process/linux_and_mac/lldb_prepare.py
+#
+# Cython-related files; we have to list these mostly individually as
+# the glob system (*.pyx for example) only works on a per-directory
+# basis
+build
+_pydevd_bundle/*.c
+_pydevd_bundle/*.pxd
+_pydevd_bundle/*.pyx
+_pydevd_frame_eval/*.c
+_pydevd_frame_eval/*.pxd
+_pydevd_frame_eval/*.pyx
+_pydevd_frame_eval/*.h
+pydevd_attach_to_process/common/*.h
+pydevd_attach_to_process/common/*.hpp
+pydevd_attach_to_process/linux_and_mac/*.sh
+pydevd_attach_to_process/linux_and_mac/*.cpp
+#
+# Unused testing scripts
+pydevd_attach_to_process/_always_live_program.py
+pydevd_attach_to_process/_test_attach_to_process.py
+pydevd_attach_to_process/_test_attach_to_process_linux.py

@@ -1,0 +1,9 @@
+do-not-install-data-files.patch
+improve-compilation-system.patch
+do-not-use-O3-compile-flag.patch
+use-bytecode-package.patch
+allow-non-local-tests.patch
+test_convert_utilities.patch
+improve-multiple-test-runs.patch
+fix_setuptools_warnings.patch
+allow_django_42.patch

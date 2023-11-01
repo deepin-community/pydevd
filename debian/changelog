@@ -1,5 +1,175 @@
-template-repository (1.0-1) unstable; urgency=medium
+pydevd (2.10.0+ds-4) unstable; urgency=medium
 
-  * Initial release
+  * Skip (further) failing tests on some more non-amd64 architectures
 
- -- Tsic404 <liuheng@deepin.org>  Sat, 28 Jan 2023 13:46:49 +0800
+ -- Julian Gilbey <jdg@debian.org>  Fri, 27 Oct 2023 07:37:39 +0100
+
+pydevd (2.10.0+ds-3) unstable; urgency=medium
+
+  * Do not force the use of the Cython extension module in tests if it has
+    not been built
+
+ -- Julian Gilbey <jdg@debian.org>  Mon, 23 Oct 2023 07:41:25 +0100
+
+pydevd (2.10.0+ds-2) unstable; urgency=medium
+
+  * Fix build on alpha: do not fail if the Cython files fail to compile
+    but fall back on the slower Python implementation instead
+  * Update runpy.py patch
+  * Remove local py3versions_min.py script now the functionality has been
+    incorporated into /usr/bin/py3versions
+
+ -- Julian Gilbey <jdg@debian.org>  Sun, 22 Oct 2023 16:45:22 +0100
+
+pydevd (2.10.0+ds-1) unstable; urgency=medium
+
+  * New upstream version 2.10.0+ds
+  * Clean compiled file in d/clean (closes: #1048859)
+  * Allow django 4.2 in tests (closes: #1052842)
+
+ -- Julian Gilbey <jdg@debian.org>  Wed, 18 Oct 2023 17:08:59 +0100
+
+pydevd (2.9.6+ds-1) unstable; urgency=medium
+
+  * New upstream version
+  * Exclude failing tests on ppc64 as well (thanks to Sebastian Ramacher
+    for catching my error on this)
+
+ -- Julian Gilbey <jdg@debian.org>  Fri, 23 Jun 2023 06:35:37 +0100
+
+pydevd (2.9.5+ds-4) unstable; urgency=medium
+
+  * Exclude failing tests on a wider variety of architectures
+    (closes: #1029718)
+
+ -- Julian Gilbey <jdg@debian.org>  Sun, 12 Mar 2023 12:36:38 +0000
+
+pydevd (2.9.5+ds-3) unstable; urgency=medium
+
+  * Update README.Debian
+
+ -- Julian Gilbey <jdg@debian.org>  Sat, 11 Feb 2023 21:30:07 +0000
+
+pydevd (2.9.5+ds-2) unstable; urgency=medium
+
+  * Skip one further test on riscv64 (even though it only fails with
+    Python 3.10)
+
+ -- Julian Gilbey <jdg@debian.org>  Tue, 03 Jan 2023 18:28:48 +0000
+
+pydevd (2.9.5+ds-1) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Julian Gilbey <jdg@debian.org>  Sun, 01 Jan 2023 22:55:42 +0000
+
+pydevd (2.9.3+ds-2) unstable; urgency=medium
+
+  * Skip further tests failing on mips64el
+
+ -- Julian Gilbey <jdg@debian.org>  Sun, 25 Dec 2022 18:39:25 +0000
+
+pydevd (2.9.3+ds-1) unstable; urgency=medium
+
+  * New upstream version
+  * Skip more tests failing on Python 3.11 and some failing with Python
+    3.10 with the new python3-bytecode release
+  * Skip failing tests on riscv64 (closes: #1024680)
+  * Update standards version (no changes required)
+
+ -- Julian Gilbey <jdg@debian.org>  Sat, 24 Dec 2022 21:31:20 +0000
+
+pydevd (2.9.2+ds-4) unstable; urgency=medium
+
+  * Don't build one of the Cython extensions on Python 3.11 - it's not yet
+    working there.  (See https://github.com/microsoft/debugpy/issues/939)
+
+ -- Julian Gilbey <jdg@debian.org>  Sun, 20 Nov 2022 19:25:23 +0000
+
+pydevd (2.9.2+ds-3) unstable; urgency=medium
+
+  * Fix Cython code on Python 3.11
+  * Exclude 16 tests that fail on Python 3.11 (reported upstream)
+
+ -- Julian Gilbey <jdg@debian.org>  Tue, 15 Nov 2022 22:45:47 +0000
+
+pydevd (2.9.2+ds-2) unstable; urgency=medium
+
+  * Add Breaks clause on older debugpy versions
+
+ -- Julian Gilbey <jdg@debian.org>  Wed, 09 Nov 2022 08:57:20 +0000
+
+pydevd (2.9.2+ds-1) unstable; urgency=medium
+
+  * New upstream version
+  * Exclude tests which fail with flask 2.2.2 (Closes: #1020795)
+  * Reinstate some previously-failing bytecode tests which have now been
+    fixed upstream
+
+ -- Julian Gilbey <jdg@debian.org>  Sun, 06 Nov 2022 13:35:52 +0000
+
+pydevd (2.8.0+git20220826.8ee4065+ds-1) unstable; urgency=medium
+
+  * New upstream snapshot
+  * Skip another failing test on armel
+  * Mark autopkgtests as flaky on architectures other than amd64 and i386
+    (closes: #1019151)
+  * Improve tests based on Spyder test process
+
+ -- Julian Gilbey <jdg@debian.org>  Mon, 05 Sep 2022 21:56:24 +0100
+
+pydevd (2.8.0+git20220714.32dee0b+dfsg-6) unstable; urgency=medium
+
+  * Add Breaks+Replaces python3-omegaconf (Closes: #1016511)
+
+ -- Julian Gilbey <jdg@debian.org>  Mon, 08 Aug 2022 20:07:18 +0100
+
+pydevd (2.8.0+git20220714.32dee0b+dfsg-5) unstable; urgency=medium
+
+  * Having some new autopkgtest failings; skip these and note them in
+    README.Debian
+
+ -- Julian Gilbey <jdg@debian.org>  Thu, 04 Aug 2022 20:33:58 +0100
+
+pydevd (2.8.0+git20220714.32dee0b+dfsg-4) unstable; urgency=medium
+
+  * Add gdb back to autopkgtest dependencies to work around bug#978639 in
+    debci
+
+ -- Julian Gilbey <jdg@debian.org>  Thu, 04 Aug 2022 08:06:49 +0100
+
+pydevd (2.8.0+git20220714.32dee0b+dfsg-3) unstable; urgency=medium
+
+  * Move gdb and python3-coverage to Depends of python3-pydevd; remove all
+    other Suggests except for pydevd
+
+ -- Julian Gilbey <jdg@debian.org>  Wed, 03 Aug 2022 19:21:25 +0100
+
+pydevd (2.8.0+git20220714.32dee0b+dfsg-2) unstable; urgency=medium
+
+  * Skip some failing tests on mips64el and ppc64el
+
+ -- Julian Gilbey <jdg@debian.org>  Fri, 29 Jul 2022 14:14:06 +0100
+
+pydevd (2.8.0+git20220714.32dee0b+dfsg-1) unstable; urgency=medium
+
+  * New upstream snapshot
+  * Fix binary-only build: it must not install /usr/bin/pydevd in the
+    python3-pydevd package
+  * Improvements to autopkgtest script
+
+ -- Julian Gilbey <jdg@debian.org>  Wed, 27 Jul 2022 21:06:59 +0100
+
+pydevd (2.8.0+git20220602.1b1fb8b+dfsg-2) unstable; urgency=medium
+
+  * Source-only upload
+
+ -- Julian Gilbey <jdg@debian.org>  Sun, 24 Jul 2022 08:35:58 +0100
+
+pydevd (2.8.0+git20220602.1b1fb8b+dfsg-1) unstable; urgency=medium
+
+  * Initial release (Closes: #933070)
+  * Initial packaging by William Grzybowski <william@grzy.org> and
+    Julian Gilbey <jdg@debian.org>
+
+ -- Julian Gilbey <jdg@debian.org>  Wed, 13 Jul 2022 06:51:12 +0100

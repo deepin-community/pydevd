@@ -1,0 +1,33 @@
+Description: Remove -O3 compile flag
+  We use the standard Debian compilation flags
+Author: Julian Gilbey <jdg@debian.org>
+Forwarded: not-needed
+Last-Update: 2022-06-14
+
+---
+ setup.py        | 2 +-
+ setup_pydevd_cython.py | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+--- a/setup.py
++++ b/setup.py
+@@ -123,7 +123,7 @@
+         # Enabling -flto brings executable from 4MB to 0.56MB and -Os to 0.41MB
+         # Profiling shows an execution around 3-5% slower with -Os vs -O3,
+         # so, kept only -flto.
+-        extra_compile_args = ["-flto", "-O3"]
++        extra_compile_args = ["-flto"]
+         extra_link_args = extra_compile_args[:]
+ 
+         # Note: also experimented with profile-guided optimization. The executable
+--- a/setup_pydevd_cython.py
++++ b/setup_pydevd_cython.py
+@@ -169,7 +169,7 @@
+             # Enabling -flto brings executable from 4MB to 0.56MB and -Os to 0.41MB
+             # Profiling shows an execution around 3-5% slower with -Os vs -O3,
+             # so, kept only -flto.
+-            extra_compile_args = ["-flto", "-O3"]
++            extra_compile_args = ["-flto"]
+             extra_link_args = extra_compile_args[:]
+ 
+             # Note: also experimented with profile-guided optimization. The executable

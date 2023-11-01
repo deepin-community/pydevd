@@ -1,0 +1,19 @@
+Description: Install subpackages to fix setuptools deprecation warning
+Author: Julian Gilbey <jdg@debian.org>
+Forwarded: https://github.com/fabioz/PyDev.Debugger/issues/235
+Last-Update: 2022-11-06
+
+--- a/setup.py
++++ b/setup.py
+@@ -60,6 +60,11 @@
+         # 'pydev_sitecustomize', -- Not actually a package (not added)
+ 
+         'pydevd_attach_to_process',
++        'pydevd_attach_to_process.common',
++        'pydevd_attach_to_process.linux_and_mac',
++        'pydevd_attach_to_process.windows',
++        'pydevd_attach_to_process.winappdbg',
++        'pydevd_attach_to_process.winappdbg.win32',
+ 
+         'pydevd_plugins',
+         'pydevd_plugins.extensions',

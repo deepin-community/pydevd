@@ -1,0 +1,35 @@
+Description: Handle Debian's purelib setting
+  The Debian value of sysconfig.get_path('purelib') contains "dist-packages"
+  rather than "site-packages".
+Author: Julian Gilbey <jdg@debian.org>
+Forwarded: not-needed
+Last-Update: 2022-11-18
+
+--- a/tests_python/test_convert_utilities.py
++++ b/tests_python/test_convert_utilities.py
+@@ -1,6 +1,6 @@
+ # coding: utf-8
+ import os.path
+-from _pydevd_bundle.pydevd_constants import IS_WINDOWS, IS_MAC
++from _pydevd_bundle.pydevd_constants import IS_WINDOWS, IS_MAC
+ import io
+ from _pydev_bundle.pydev_log import log_context
+ import pytest
+@@ -367,7 +367,7 @@
+         pydevd_file_utils.NORM_PATHS_AND_BASE_CONTAINER.clear()
+         pydevd_file_utils.NORM_PATHS_CONTAINER.clear()
+         abs_path = pydevd_file_utils.get_abs_path_real_path_and_base_from_file('my_dir/my_file.pyx')[0]
+-        assert 'site-packages' in abs_path
++        assert 'site-packages' in abs_path or 'dist-packages' in abs_path
+         assert os.path.normcase(str(tmpdir)) not in abs_path
+         assert not pydevd_file_utils.exists('my_dir/my_file.pyx')
+ 
+@@ -381,7 +382,7 @@
+         pydevd_file_utils.NORM_PATHS_AND_BASE_CONTAINER.clear()
+         pydevd_file_utils.NORM_PATHS_CONTAINER.clear()
+         abs_path = pydevd_file_utils.get_abs_path_real_path_and_base_from_file('my_dir/my_file.pyx')[0]
+-        assert 'site-packages' not in abs_path
++        assert 'site-packages' not in abs_path and 'dist-packages' not in abs_path
+         assert str(tmpdir) in abs_path
+         assert pydevd_file_utils.exists('my_dir/my_file.pyx')
+     finally:
