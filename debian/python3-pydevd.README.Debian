@@ -1,0 +1,50 @@
+pydevd for Debian
+=================
+
+* Python 3.11
+
+pydevd is currently only partially functional on Python 3.11.  In
+particular, frame_eval is not yet supported.  See
+https://github.com/microsoft/debugpy/issues/939 for a brief comment on
+this.  A number of tests have been disabled because of this.
+
+* Possible issues on non-amd64/i386 architectures
+
+The upstream pydevd developers only develop this software for the
+amd64 and i386 architectures.  The Debian package is built for all of
+the other supported architectures.  There are many test suite failures
+(some only intermittently) on armel, mipsel and mips64el, and one
+failure on ppc64el; these may indicate some problems with this package
+on these platform; I have not been able to locate the cause of the
+test failures or identify any actual problems.  If you are able to
+help with this, please feel free to report a bug via the Debian bug
+tracking system.
+
+* Non-vendored bytecode package
+
+Following standard Debian practice, the Debian package of pydevd
+relies on the python3-bytecode package rather than including a
+vendored copy of bytecode.  (The python3-bytecode package has been
+patched to be compatible with pydevd.)  This may mean that it is not
+possible to debug the bytecode package using pydevd.  If this is
+required, it may be necessary to use a virtual environment and install
+the upstream pydevd (or debugpy) package in it.
+
+* Using pydevd_attach.py directly
+
+This is based on the README file in the source package:
+
+The pydevd_attach_to_process directory contains the utilities to
+attach a target process to the pydev debugger.
+
+The main module to be called for the attach is:
+
+attach_pydevd.py
+
+it can be called as:
+
+python3 /usr/lib/python3/dist-packages/pydevd_attach_to_process/attach_pydevd.py --port 5678 --pid 1234
+
+Note that the client is responsible for having a remote debugger alive in the given port for the attach to work.
+
+ -- Julian Gilbey <jdg@debian.org>, Sat, 11 Feb 2023 21:29:47 +0000

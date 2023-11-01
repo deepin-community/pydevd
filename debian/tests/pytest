@@ -1,0 +1,52 @@
+#! /bin/bash
+
+set -e
+
+PYS=$(py3versions -s)
+
+cp -a debian/run_tests $(cat debian/pybuild.testfiles) "$AUTOPKGTEST_TMP"
+ROOTDIR=$(pwd)
+
+cd "$AUTOPKGTEST_TMP"
+
+# Most tests work whether or not PYTHONPATH is set to the directory containing
+# the tests.  But some tests require it to be set and others fail if it is set.
+# So we run pytest twice, once with and once without PYTHONPATH.
+
+NO_PATH_TESTS=(
+    tests_python/test_debugger.py::test_module_entry_point
+    tests_python/test_debugger.py::test_m_switch
+    tests_python/test_debugger.py::test_stop_on_start_m_switch
+    tests_python/test_debugger.py::test_stop_on_start_entry_point
+)
+
+NO_PATH_DESELECTS=()
+for test in "${NO_PATH_TESTS[@]}"
+do
+    NO_PATH_DESELECTS+=("--deselect=$test")
+done
+
+
+for py in $PYS
+do
+    echo "Testing with $py:"
+    if [ -n "$(ls /usr/lib/python3/dist-packages/_pydevd_bundle/pydevd_cython.*.so 2>/dev/null)" ]
+    then
+	echo "Compiled Cython module found; testing it"
+	export PYDEVD_USE_CYTHON=YES
+    else
+	echo "No compiled Cython module found"
+	export PYDEVD_USE_CYTHON=NO
+    fi
+
+    # Note: we don't use "-n auto" in the pytest call, as that causes
+    # weird breakages
+
+    export PYTHONPATH=$(pwd)
+    cmd="$py -m pytest ${NO_PATH_DESELECTS[*]}"
+    xvfb-run -a ./run_tests $ROOTDIR/debian/get_test_exclusions $cmd
+    unset PYTHONPATH
+
+    cmd="$py -m pytest ${NO_PATH_TESTS[*]}"
+    xvfb-run -a ./run_tests $ROOTDIR/debian/get_test_exclusions $cmd
+done

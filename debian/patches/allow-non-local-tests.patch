@@ -1,0 +1,122 @@
+Description: Allow the tests to run outside of the build area
+Author: Julian Gilbey <jdg@debian.org>
+Forwarded: not-needed
+Last-Update: 2022-07-11
+
+--- a/tests_python/debugger_unittest.py
++++ b/tests_python/debugger_unittest.py
+@@ -754,14 +754,12 @@
+         return None
+ 
+     def get_pydevd_file(self):
+-        dirname = os.path.dirname(__file__)
+-        dirname = os.path.dirname(dirname)
+-        return os.path.abspath(os.path.join(dirname, 'pydevd.py'))
++        import pydevd
++        return pydevd.__file__
+ 
+     def get_pydevconsole_file(self):
+-        dirname = os.path.dirname(__file__)
+-        dirname = os.path.dirname(dirname)
+-        return os.path.abspath(os.path.join(dirname, 'pydevconsole.py'))
++        import pydevconsole
++        return pydevconsole.__file__
+ 
+     def get_line_index_with_content(self, line_content, filename=None):
+         '''
+--- a/tests_python/test_run.py
++++ b/tests_python/test_run.py
+@@ -33,11 +33,14 @@
+     foo_module = 'tests_python.resources.launch.foo'
+ 
+     pydevd_dir = os.path.dirname(os.path.dirname(__file__))
+-    assert os.path.exists(os.path.join(pydevd_dir, 'pydevd.py'))
++    if os.path.exists(os.path.join(pydevd_dir, 'pydevd.py')):
++        append_path = 'sys.path.append(%r)' % pydevd_dir
++    else:
++        append_path = ''
+ 
+     _run_and_check(testdir_or_pytester, testdir_or_pytester.makepyfile('''
+ import sys
+-sys.path.append(%(pydevd_dir)r)
++%(append_path)s
+ import pydevd
+ py_db = pydevd.PyDB()
+ py_db.ready_to_run = True
+@@ -46,7 +49,7 @@
+ 
+     _run_and_check(testdir_or_pytester, testdir_or_pytester.makepyfile('''
+ import sys
+-sys.path.append(%(pydevd_dir)r)
++%(append_path)s
+ import pydevd
+ py_db = pydevd.PyDB()
+ py_db.run(%(foo_dir)r, set_trace=False)
+@@ -58,7 +61,7 @@
+ 
+     _run_and_check(testdir_or_pytester, testdir_or_pytester.makepyfile('''
+ import sys
+-sys.path.append(%(pydevd_dir)r)
++%(append_path)s
+ sys.argv.append('--as-module')
+ import pydevd
+ py_db = pydevd.PyDB()
+@@ -69,7 +72,7 @@
+     _run_and_check(testdir_or_pytester, testdir_or_pytester.makepyfile('''
+ import sys
+ sys.argv.append('--as-module')
+-sys.path.append(%(pydevd_dir)r)
++%(append_path)s
+ import pydevd
+ py_db = pydevd.PyDB()
+ py_db.run(%(foo_module)r, is_module=True, set_trace=False)
+@@ -81,7 +84,10 @@
+     import os
+ 
+     pydevd_dir = os.path.dirname(os.path.dirname(__file__))
+-    assert os.path.exists(os.path.join(pydevd_dir, 'pydevd.py'))
++    if os.path.exists(os.path.join(pydevd_dir, 'pydevd.py')):
++        append_path = 'sys.path.append(%r)' % pydevd_dir
++    else:
++        append_path = ''
+ 
+     foo_module = 'local_foo'
+     with open(os.path.join(os.getcwd(), 'local_foo.py'), 'w') as stream:
+@@ -90,7 +96,7 @@
+     _run_and_check(testdir_or_pytester, testdir_or_pytester.makepyfile('''
+ import sys
+ import os
+-sys.path.append(%(pydevd_dir)r)
++%(append_path)s
+ sys.argv.append('--as-module')
+ cwd = os.path.abspath(os.getcwd())
+ while cwd in sys.path:
+@@ -105,7 +111,7 @@
+ import sys
+ import os
+ sys.argv.append('--as-module')
+-sys.path.append(%(pydevd_dir)r)
++%(append_path)s
+ cwd = os.path.abspath(os.getcwd())
+ while cwd in sys.path:
+     sys.path.remove(cwd)
+--- a/tests_python/test_utilities.py
++++ b/tests_python/test_utilities.py
+@@ -313,7 +313,7 @@
+     cwd = os.path.abspath(os.path.dirname(__file__))
+     assert os.path.isdir(cwd)
+ 
+-    resources_dir = os.path.join(os.path.dirname(pydevd.__file__), 'tests_python', 'resources')
++    resources_dir = os.path.join(cwd, 'resources')
+     assert os.path.isdir(resources_dir)
+ 
+     attach_to_process_dir = os.path.join(os.path.dirname(pydevd.__file__), 'pydevd_attach_to_process')
+@@ -396,7 +396,7 @@
+         cwd=cwd
+     )
+ 
+-    resources_dir = os.path.join(os.path.dirname(pydevd.__file__), 'tests_python', 'resources')
++    resources_dir = os.path.join(os.path.dirname(__file__), 'resources')
+ 
+     subprocess.check_call(
+         [sys.executable, os.path.join(resources_dir, '_pydevd_test_find_main_thread_id.py') ],

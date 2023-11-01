@@ -1,0 +1,62 @@
+# We mark the tests on all architectures other than amd64 and i386 as
+# flaky, as some of the tests intermittently fail for some unknown
+# reason.  Failures on amd64 and i386 (which the package is designed
+# to run on) should flag an issue.
+
+# We do not use an Architectures restriction, as that leads to
+# non-zero autopkgtest exit status, which is confusing.
+
+Test-Command: debian/tests/pytest
+Depends: gdb,
+         libqt5x11extras5,
+         procps,
+         python3-all,
+         python3-cherrypy3,
+         python3-coverage,
+         python3-django,
+         python3-flask,
+         python3-gevent,
+         python3-ipython,
+         python3-jinja2,
+         python3-matplotlib,
+         python3-numpy,
+         python3-pandas,
+         python3-psutil,
+         python3-pyqt5,
+         python3-pyqt5.qtsvg,
+         python3-pytest,
+         python3-pytest-xdist,
+         python3-trio,
+         python3-untangle,
+         xauth,
+         xvfb,
+         @
+Architecture: amd64 i386
+
+Test-Command: debian/tests/pytest
+Depends: gdb,
+         libqt5x11extras5,
+         procps,
+         python3-all,
+         python3-cherrypy3,
+         python3-coverage,
+         python3-django,
+         python3-flask,
+         python3-gevent,
+         python3-ipython,
+         python3-jinja2,
+         python3-matplotlib,
+         python3-numpy,
+         python3-pandas,
+         python3-psutil,
+         python3-pyqt5,
+         python3-pyqt5.qtsvg,
+         python3-pytest,
+         python3-pytest-xdist,
+         python3-trio,
+         python3-untangle,
+         xauth,
+         xvfb,
+         @
+Architecture: !amd64 !i386
+Restrictions: flaky

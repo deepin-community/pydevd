@@ -1,0 +1,174 @@
+#! /bin/bash
+
+# Some of the tests must be excluded across all architectures for
+# a variety of reasons.
+
+# This script is called from both debian/rules and from the
+# autopkgtest suite.
+
+interpreter=$1
+arch=$(dpkg --print-architecture)
+
+# * Some of the tests depend on the uninstalled pycompletionserver.py
+# or pydev_coverage.py, so we ignore those; if they are only deselected,
+# pytest collection fails as the imports fail
+IGNORES=(
+    --ignore=tests/test_jyserver.py
+    --ignore=tests/test_pyserver.py
+    --ignore=tests_python/test_pydevcoverage.py
+)
+
+# The rest will be excluded
+EXCLUDES=()
+
+# * test_case_flask_exceptions fails, and is not tested by upstream,
+# so we just skip it.
+# Reported upstream to
+# https://github.com/fabioz/PyDev.Debugger/issues/223
+EXCLUDES+=(tests_python/test_debugger_json.py::test_case_flask_exceptions)
+
+# * Two flask tests fail with Flask 2.2.2, so we exclude those.
+# Reported upstream to https://github.com/fabioz/PyDev.Debugger/issues/229
+EXCLUDES+=(
+    tests_python/test_debugger.py::test_case_flask
+    tests_python/test_debugger_json.py::test_case_flask_line_validation
+)
+
+# * test_py_37_breakpoint_remote_no_import does not work on the built
+# or installed version; reported upstream to
+# https://github.com/fabioz/PyDev.Debugger/issues/224
+EXCLUDES+=(tests_python/test_debugger.py::test_py_37_breakpoint_remote_no_import)
+
+# With recent versions of Python 3.10 and/or some updated libraries,
+# test_gevent_show_paused_greenlets[True] now fails on amd64 as well
+# as other architectures.  Reported upstream to
+# https://github.com/fabioz/PyDev.Debugger/issues/236
+EXCLUDES+=(tests_python/test_debugger.py::test_gevent_show_paused_greenlets)
+
+# bytecode 0.14 causes numerous test failures.  This is probably
+# something to do with a slightly changed bytecode production, but
+# until pydevd is updated to handle the new bytecode release, we will
+# have to skip the tests.  This may or may not cause problems for
+# users of pydevd.  Many are already skipped by upstream with Python
+# 3.11 anyway.
+EXCLUDES+=(
+    tests_python/test_bytecode_manipulation.py::test_set_pydevd_break_05
+    tests_python/test_bytecode_manipulation.py::test_set_pydevd_break_06
+    tests_python/test_bytecode_manipulation.py::test_set_pydevd_break_07
+    tests_python/test_bytecode_manipulation.py::test_set_pydevd_break_08
+    tests_python/test_debugger.py::test_asyncio_step_over_end_of_function
+    tests_python/test_debugger.py::test_asyncio_step_in
+    tests_python/test_debugger.py::test_asyncio_step_return
+    tests_python/test_debugger_json.py::test_case_stop_async_iteration_exception
+    tests_python/test_debugger_json.py::test_process_autoreload_cherrypy
+    tests_python/test_debugger_json.py::test_function_breakpoints_async
+    tests_python/test_frame_eval_and_tracing.py::test_generator_code_cache
+)
+
+# Numerous tests fail on Python 3.11
+# https://github.com/fabioz/PyDev.Debugger/issues/240
+EXCLUDES+=(
+    tests_python/test_debugger.py::test_case_django_a
+    tests_python/test_debugger.py::test_case_qthread1
+    tests_python/test_debugger.py::test_case_qthread2
+    tests_python/test_debugger.py::test_case_qthread3
+    tests_python/test_debugger.py::test_case_qthread4
+    tests_python/test_debugger.py::test_multiprocessing_simple[_debugger_case_python_c.py]
+    tests_python/test_debugger.py::test_subprocess_quoted_args[_debugger_case_quoting.py]
+    tests_python/test_debugger.py::test_subprocess_quoted_args[_debugger_case_subprocess_zip.py]
+    tests_python/test_debugger.py::test_remote_debugger_multi_proc[True]
+    tests_python/test_debugger.py::test_remote_debugger_multi_proc[False]
+    tests_python/test_debugger_json.py::test_subprocess_pydevd_customization[]
+    tests_python/test_debugger_json.py::test_subprocess_pydevd_customization[--use-c-switch]
+    tests_python/test_debugger_json.py::test_subprocess_pydevd_customization[--posix-spawn]
+    tests_python/test_debugger_json.py::test_subprocess_then_fork
+    tests_python/test_debugger_json.py::test_no_subprocess_patching[True]
+    tests_python/test_debugger_json.py::test_logging_api
+    tests_python/test_debugger_json.py::test_case_stop_async_iteration_exception
+    tests_python/test_debugger_json.py::test_process_autoreload_cherrypy
+    tests_python/test_debugger_json.py::test_function_breakpoints_async
+)
+
+# Some tests fail intermittently or consistently on some
+# architectures; we therefore perform a per-architecture exclusion.
+# Since upstream only officially supports amd64 and i386, we have not
+# reported these upstream.  Also see README.Debian.
+
+case $arch in
+    # failing tests on 32-bit big-endian targets and riscv64
+    hppa|m68k|powerpc|riscv64)
+    EXCLUDES+=(
+        tests_python/test_debugger.py::test_gevent
+        tests_python/test_debugger.py::test_gevent_remote
+        tests_python/test_debugger_json.py::test_wait_for_attach_gevent
+        tests_python/test_debugger_json.py::test_gevent_subprocess_not_python
+        tests_python/test_debugger_json.py::test_gevent_subprocess_python
+        tests_python/test_debugger_json.py::test_notify_gevent
+        tests_python/test_utilities.py::test_gevent_notify
+    )
+    ;;&
+    # failing tests on some 64-bit arches
+    s390x|ppc64|sparc64|powerpc)
+    EXCLUDES+=(
+        tests_python/test_debugger.py::test_case_13
+        tests_python/test_debugger.py::test_check_tracer_with_exceptions
+        tests_python/test_debugger.py::test_unhandled_exceptions_basic
+        tests_python/test_debugger.py::test_case_settrace
+        tests_python/test_debugger.py::test_py_37_breakpoint[_debugger_case_breakpoint.py]
+        tests_python/test_debugger.py::test_stop_on_start_m_switch
+        tests_python/test_debugger.py::test_attach_to_pid_halted
+        tests_python/test_debugger.py::test_remote_debugger_threads
+        tests_python/test_debugger_json.py::test_case_unhandled_exception[_debugger_case_unhandled_exceptions.py]
+        tests_python/test_debugger_json.py::test_case_unhandled_exception[_debugger_case_unhandled_exceptions_custom.py]
+        tests_python/test_utilities.py::test_tracing_basic
+    )
+    ;;&
+    # further failing tests on riscv64 (see bug#1024680)
+    riscv64)
+    EXCLUDES+=(
+        tests_python/test_debugger.py::test_case_16_resolve_numpy_array
+        tests_python/test_debugger_json.py::test_attach_to_pid[False]
+    )
+    ;;&
+    mipsel|mips64el|armel|riscv64|alpha|loong64)
+    EXCLUDES+=(
+        tests_python/test_debugger.py::test_attach_to_pid_no_threads
+        tests_python/test_debugger.py::test_attach_to_pid_halted
+        tests_python/test_debugger.py::test_case_django_b
+        tests_python/test_debugger.py::test_case_django_invalid_template_exception_breakpoint
+        tests_python/test_debugger.py::test_case_django_no_attribute_exception_breakpoint
+        tests_python/test_debugger.py::test_case_django_no_attribute_exception_breakpoint_and_regular_exceptions
+        tests_python/test_debugger.py::test_case_django_no_var_error
+        tests_python/test_debugger.py::test_case_django_template_inherits_no_exception
+        tests_python/test_debugger.py::test_case_flask
+        tests_python/test_debugger_json.py::test_attach_to_pid
+        tests_python/test_debugger_json.py::test_case_django_line_validation
+        tests_python/test_debugger_json.py::test_case_django_no_attribute_exception_breakpoint
+        tests_python/test_debugger_json.py::test_case_flask_line_validation
+        tests_python/test_debugger_json.py::test_code_reload
+        tests_python/test_debugger_json.py::test_case_user_unhandled_exception[True]
+        tests_python/test_debugger_json.py::test_step_next_step_in_multi_threads[step_next-False]
+        tests_python/test_debugger_json.py::test_step_next_step_in_multi_threads[step_in-False]
+        tests_python/test_debugger_json.py::test_gevent_subprocess_python
+    )
+    ;;&
+    ppc64el)
+    EXCLUDES+=(
+        tests_python/test_debugger_json.py::test_code_reload
+    )
+    ;;&
+    arm64)
+    EXCLUDES+=(
+            tests_python/test_debugger_json.py::test_notify_gevent
+    )
+    ;;&
+    *) ;;
+esac
+
+DESELECTS=()
+for test in "${EXCLUDES[@]}"
+do
+    DESELECTS+=("--deselect=$test")
+done
+
+echo ${IGNORES[*]} ${DESELECTS[*]}
