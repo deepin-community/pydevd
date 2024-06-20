@@ -7,3 +7,4 @@ test_convert_utilities.patch
 improve-multiple-test-runs.patch
 fix_setuptools_warnings.patch
 allow_django_42.patch
+pandas2_compat.patch

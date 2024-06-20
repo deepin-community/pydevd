@@ -4,7 +4,13 @@
 include /usr/share/dpkg/pkg-info.mk
 export PYBUILD_NAME=pydevd
 
+# This is related to #1040062; see
+# https://lists.debian.org/debian-alpha/2023/10/msg00007.html
+ifneq (,$(filter $(DEB_HOST_ARCH), alpha ia64 x32))
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all,-pie
+else
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+endif
 
 CXXFLAGS:=$(shell dpkg-buildflags --get CXXFLAGS)
 CPPFLAGS:=$(shell dpkg-buildflags --get CPPFLAGS)

@@ -1,0 +1,27 @@
+Description: Stop using pandas.applymap from Pandas 2.1
+  Pandas 1.5.3 is currently in testing, which uses applymap();
+  this was renamed to map() in Pandas 2.1, which is in unstable.
+  This patch should allow this test to succeed on both versions.
+  The test is crude; it would fail if used with Pandas 2.0.  It
+  can be replaced entirely by the Pandas 2.1 version once that
+  version reaches testing.
+Author: Rebecca N. Palmer <rebecca_palmer@zoho.com>
+  Julian Gilbey <jdg@debian.org>
+Bug-Debian: https://bugs.debian.org/1063274
+Forwarded: no
+Last-Update: 2024-02-09
+
+--- a/tests_python/test_debugger_json.py
++++ b/tests_python/test_debugger_json.py
+@@ -6204,7 +6204,10 @@ def test_pandas(case_setup_dap, pyfile):
+         pd.set_option('display.max_rows', None)
+ 
+         items = rows * cols
+-        df = pd.DataFrame(np.arange(items).reshape(rows, cols)).applymap(lambda x: 'Test String')
++        if pd.__version__.startswith("1"):
++                df = pd.DataFrame(np.arange(items).reshape(rows, cols)).applymap(lambda x: 'Test String')
++        else:
++                df = pd.DataFrame(np.arange(items).reshape(rows, cols)).map(lambda x: 'Test String')
+         series = df._series[0]
+         styler = df.style
+ 

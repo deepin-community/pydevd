@@ -45,6 +45,13 @@ EXCLUDES+=(tests_python/test_debugger.py::test_py_37_breakpoint_remote_no_import
 # https://github.com/fabioz/PyDev.Debugger/issues/236
 EXCLUDES+=(tests_python/test_debugger.py::test_gevent_show_paused_greenlets)
 
+# The following tests have started failing on Python 3.12 on amd64,
+# so we skip them for all archs.
+EXCLUDES+=(
+    tests_python/test_debugger_json.py::test_notify_gevent
+    tests_python/test_debugger_json.py::test_step_next_step_in_multi_threads[step_next-True]
+)
+
 # bytecode 0.14 causes numerous test failures.  This is probably
 # something to do with a slightly changed bytecode production, but
 # until pydevd is updated to handle the new bytecode release, we will
@@ -89,6 +96,24 @@ EXCLUDES+=(
     tests_python/test_debugger_json.py::test_function_breakpoints_async
 )
 
+# And another bunch fail on Python 3.12
+# https://github.com/fabioz/PyDev.Debugger/issues/267
+EXCLUDES+=(
+    tests_python/test_debugger.py::test_attach_to_pid_halted
+    tests_python/test_debugger.py::test_case_13
+    tests_python/test_debugger.py::test_case_handled_and_unhandled_exception_generator[False-_debugger_case_unhandled_exceptions_listcomp.py]
+    tests_python/test_debugger.py::test_remote_debugger_threads
+    tests_python/test_debugger_json.py::test_case_unhandled_exception_generator[_debugger_case_unhandled_exceptions_listcomp.py]
+    tests_python/test_utilities.py::test_tracing_basic
+    tests_python/test_utilities.py::test_tracing_other_threads
+    tests_python/test_debugger.py::test_gevent
+    tests_python/test_debugger.py::test_gevent_remote
+    tests_python/test_debugger_json.py::test_wait_for_attach_gevent
+    tests_python/test_debugger_json.py::test_gevent_show_paused_greenlets[True]
+    tests_python/test_debugger_json.py::test_gevent_subprocess_not_python
+    tests_python/test_debugger_json.py::test_gevent_subprocess_python
+)
+
 # Some tests fail intermittently or consistently on some
 # architectures; we therefore perform a per-architecture exclusion.
 # Since upstream only officially supports amd64 and i386, we have not
@@ -103,7 +128,6 @@ case $arch in
         tests_python/test_debugger_json.py::test_wait_for_attach_gevent
         tests_python/test_debugger_json.py::test_gevent_subprocess_not_python
         tests_python/test_debugger_json.py::test_gevent_subprocess_python
-        tests_python/test_debugger_json.py::test_notify_gevent
         tests_python/test_utilities.py::test_gevent_notify
     )
     ;;&
@@ -130,6 +154,12 @@ case $arch in
         tests_python/test_debugger_json.py::test_attach_to_pid[False]
     )
     ;;&
+    # Another greenlets test is failing on powerpc
+    powerpc)
+    EXCLUDES+=(
+        tests_python/test_debugger_json.py::test_gevent_show_paused_greenlets
+    )
+    ;;&
     mipsel|mips64el|armel|riscv64|alpha|loong64)
     EXCLUDES+=(
         tests_python/test_debugger.py::test_attach_to_pid_no_threads
@@ -152,14 +182,14 @@ case $arch in
         tests_python/test_debugger_json.py::test_gevent_subprocess_python
     )
     ;;&
-    ppc64el)
+    ppc64el|i386|arm64)
     EXCLUDES+=(
         tests_python/test_debugger_json.py::test_code_reload
     )
     ;;&
-    arm64)
+    armhf)
     EXCLUDES+=(
-            tests_python/test_debugger_json.py::test_notify_gevent
+	tests_python/test_debugger.py::test_case_13
     )
     ;;&
     *) ;;

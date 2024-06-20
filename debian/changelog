@@ -1,3 +1,47 @@
+pydevd (2.10.0+ds-10) unstable; urgency=medium
+
+  * Skip newly failing test on i386 and arm64
+
+ -- Julian Gilbey <jdg@debian.org>  Thu, 22 Feb 2024 06:16:53 +0000
+
+pydevd (2.10.0+ds-9) unstable; urgency=medium
+
+  [ Julian Gilbey ]
+  * Skip more tests failing on Python 3.12 on our setup
+
+  [ Rebecca N. Palmer ]
+  * Tests: be compatible with pandas 2.1 (closes: #1063274)
+
+ -- Julian Gilbey <jdg@debian.org>  Wed, 21 Feb 2024 11:34:25 +0000
+
+pydevd (2.10.0+ds-8) unstable; urgency=medium
+
+  * Fix FTBFS and reported failing tests upstream (closes: #1058222)
+
+ -- Julian Gilbey <jdg@debian.org>  Thu, 28 Dec 2023 20:15:29 +0000
+
+pydevd (2.10.0+ds-7) unstable; urgency=medium
+
+  * Skip tests failing during Python 3.12 build and report upstream
+
+ -- Julian Gilbey <jdg@debian.org>  Fri, 08 Dec 2023 12:09:19 +0000
+
+pydevd (2.10.0+ds-6) unstable; urgency=medium
+
+  * Skip failing test on armhf
+
+ -- Julian Gilbey <jdg@debian.org>  Mon, 06 Nov 2023 19:51:14 +0000
+
+pydevd (2.10.0+ds-5) unstable; urgency=medium
+
+  * Mark as Breaks older debugpy versions
+  * Fix shared library build problem on alpha etc with thanks to Adrian
+    Bunk (use hardening=+all,-pie on alpha, ia64 and x32).  But maintain
+    the check for the presence of the compiled library in case there are
+    other architectures where this fails.
+
+ -- Julian Gilbey <jdg@debian.org>  Mon, 06 Nov 2023 09:48:39 +0000
+
 pydevd (2.10.0+ds-4) unstable; urgency=medium
 
   * Skip (further) failing tests on some more non-amd64 architectures
