@@ -65,7 +65,7 @@ Depends: gdb,
          ${python3:Depends},
          ${shlibs:Depends}
 Suggests: pydevd
-Breaks: python3-debugpy (<< 1.6.3+git20221103.a2a3328+ds),
+Breaks: python3-debugpy (<< 1.8.0+ds),
         python3-omegaconf (<< 2.2.2-1)
 Replaces: python3-omegaconf (<< 2.2.2-1)
 Description: ${source:Synopsis} (command line script)
