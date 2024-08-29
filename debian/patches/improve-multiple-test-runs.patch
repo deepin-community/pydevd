@@ -7,7 +7,7 @@ Last-Update: 2022-09-05
 
 --- a/conftest.py
 +++ b/conftest.py
-@@ -5,9 +5,44 @@
+@@ -5,9 +5,43 @@
  from tests_python.debug_constants import PYDEVD_TEST_VM
  import site
  import os
@@ -38,8 +38,7 @@ Last-Update: 2022-09-05
 +
 +def pytest_collection_modifyitems(config, items):
 +    """
-+    Decide what tests to run (slow or fast) according to the --run-slow
-+    option.
++    Skip tests that passed on a previous run.
 +    """
 +    passed_tests = get_passed_tests()
 +    skip_passed = pytest.mark.skip(reason="Test passed in previous runs")
@@ -50,5 +49,5 @@ Last-Update: 2022-09-05
 +
 +
  def pytest_report_header(config):
-     print('PYDEVD_USE_CYTHON: %s' % (TEST_CYTHON,))
-     print('PYDEVD_TEST_VM: %s' % (PYDEVD_TEST_VM,))
+     print("PYDEVD_USE_CYTHON: %s" % (TEST_CYTHON,))
+     print("PYDEVD_TEST_VM: %s" % (PYDEVD_TEST_VM,))

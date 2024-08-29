@@ -1,3 +1,20 @@
+pydevd (3.1.0+ds-2) unstable; urgency=medium
+
+  * Exclude new test failing on s390x and ppc64
+
+ -- Julian Gilbey <jdg@debian.org>  Mon, 01 Jul 2024 19:06:09 +0100
+
+pydevd (3.1.0+ds-1) unstable; urgency=medium
+
+  * New upstream version
+  * Refreshed patches for new upstream formatting
+  * Exclude failing test (closes: #1069412); reported upstream
+  * Exclude tests causing Python 3.12 to crash
+    (tests_python/test_evaluate_expression.py); reported upstream
+  * Exclude one flaky test
+
+ -- Julian Gilbey <jdg@debian.org>  Mon, 01 Jul 2024 06:43:45 +0100
+
 pydevd (2.10.0+ds-10) unstable; urgency=medium
 
   * Skip newly failing test on i386 and arm64
