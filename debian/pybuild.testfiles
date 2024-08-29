@@ -1,5 +1,6 @@
 conftest.py
 pytest.ini
+runfiles.py
 test_pydevd_reload
 tests
 tests_mainloop

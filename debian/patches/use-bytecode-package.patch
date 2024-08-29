@@ -4,13 +4,7 @@ Description: Use bytecode package rather than local version
   package.
 Author: Julian Gilbey <jdg@debian.org>
 Forwarded: not-needed
-Last-Update: 2022-02-12
-
----
- _pydevd_bundle/pydevd_bytecode_utils.py      | 6 +++---
- _pydevd_frame_eval/pydevd_modify_bytecode.py | 4 ++--
- setup.py                                     | 2 --
- 3 files changed, 5 insertions(+), 7 deletions(-)
+Last-Update: 2024-06-30
 
 --- a/_pydevd_bundle/pydevd_bytecode_utils.py
 +++ b/_pydevd_bundle/pydevd_bytecode_utils.py
@@ -18,10 +12,10 @@ Last-Update: 2022-02-12
  
  from _pydev_bundle import pydev_log
  from types import CodeType
--from _pydevd_frame_eval.vendored.bytecode.instr import _Variable
+-from _pydevd_frame_eval.vendored.bytecode.instr import _Variable, Label
 -from _pydevd_frame_eval.vendored import bytecode
 -from _pydevd_frame_eval.vendored.bytecode import cfg as bytecode_cfg
-+from bytecode.instr import _Variable
++from bytecode.instr import _Variable, Label
 +import bytecode
 +from bytecode import cfg as bytecode_cfg
  import dis
@@ -42,12 +36,12 @@ Last-Update: 2022-02-12
  
 --- a/setup.py
 +++ b/setup.py
-@@ -55,8 +55,6 @@
-         '_pydevd_bundle._debug_adapter',
-         '_pydevd_bundle.pydevd_concurrency_analyser',
-         '_pydevd_frame_eval',
--        '_pydevd_frame_eval.vendored',
--        '_pydevd_frame_eval.vendored.bytecode',
-         'pydev_ipython',
- 
+@@ -57,8 +57,6 @@
+         "_pydevd_bundle.pydevd_concurrency_analyser",
+         "_pydevd_frame_eval",
+         "_pydevd_sys_monitoring",
+-        "_pydevd_frame_eval.vendored",
+-        "_pydevd_frame_eval.vendored.bytecode",
+         "pydev_ipython",
          # 'pydev_sitecustomize', -- Not actually a package (not added)
+         "pydevd_attach_to_process",
